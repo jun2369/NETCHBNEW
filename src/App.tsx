@@ -1,6 +1,8 @@
 // @ts-nocheck
 import React, { useState, useRef } from 'react';
 
+
+
 // Define types for Excel operations
 declare global {
   interface Window {
