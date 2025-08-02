@@ -59,7 +59,7 @@ const OtherPage: React.FC = () => {
           Nimbus Tool
         </button>
         <p className="mt-4 text-gray-600 max-w-md">
-          For non-TEMU PGA, Please click and use Nimbus Tool for conversion.
+          For non-TEMU PGA, please click and use Nimbus Tool for conversion.
         </p>
       </div>
     </div>
@@ -76,7 +76,7 @@ const TemuPGAPage: React.FC = () => {
   const [xlsxLoaded, setXlsxLoaded] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  
+  // 列映射关系
   const columnMapping: { [key: string]: string } = {
     'E': 'V',
     'G': 'W',
@@ -93,7 +93,7 @@ const TemuPGAPage: React.FC = () => {
     'BP': 'I'
   };
 
-  
+  // 固定填充内容
   const fixedValues: { [key: string]: string } = {
     'Admiralty': 'X',
     '40': 'M',
@@ -105,7 +105,7 @@ const TemuPGAPage: React.FC = () => {
     '4701': 'AV'
   };
 
-  
+  // Load XLSX library
   React.useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
@@ -466,7 +466,7 @@ const TemuPGAPage: React.FC = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">TEMU PGA Processing Tool</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">TEMU PGA to NETCHB Processing Tool</h1>
       
       {!xlsxLoaded && (
         <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
