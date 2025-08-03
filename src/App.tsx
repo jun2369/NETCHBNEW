@@ -1,7 +1,4 @@
-// @ts-nocheck
 import React, { useState, useRef } from 'react';
-
-
 
 // Define types for Excel operations
 declare global {
@@ -62,7 +59,7 @@ const OtherPage: React.FC = () => {
           Nimbus Tool
         </button>
         <p className="mt-4 text-gray-600 max-w-md">
-          For non-TEMU PGA, please click and use Nimbus Tool for conversion.
+          For non-TEMU PGA, Please click and use Nimbus Tool for conversion.
         </p>
       </div>
     </div>
@@ -74,12 +71,15 @@ const TemuPGAPage: React.FC = () => {
   const [mawb, setMawb] = useState('');
   const [flightNo, setFlightNo] = useState('');
   const [airport, setAirport] = useState('ORD');
+  const [houseBill, setHouseBill] = useState('');
+  const [entryDate, setEntryDate] = useState('');
+  const [importDate, setImportDate] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [xlsxLoaded, setXlsxLoaded] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 列映射关系
+  
   const columnMapping: { [key: string]: string } = {
     'E': 'V',
     'G': 'W',
@@ -93,10 +93,12 @@ const TemuPGAPage: React.FC = () => {
     'BH': 'G和AM',
     'BL': 'AO和AP',
     'BM': 'H',
-    'BP': 'I'
+    'BP': 'I',
+    'BT': 'BF',
+    'N': 'AA'
   };
 
-  // 固定填充内容
+  
   const fixedValues: { [key: string]: string } = {
     'Admiralty': 'X',
     '40': 'M',
@@ -108,7 +110,7 @@ const TemuPGAPage: React.FC = () => {
     '4701': 'AV'
   };
 
-  // Load XLSX library
+  
   React.useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
@@ -276,6 +278,21 @@ const TemuPGAPage: React.FC = () => {
                 const flightNoRest = flightNo.substring(2);       // 后面的 -> AT列
                 newSheet[`AS${outputRow}`] = { v: flightNoFirst2, t: 's' };
                 newSheet[`AT${outputRow}`] = { v: flightNoRest, t: 's' };
+                
+                // House Bill -> AJ列
+                if (houseBill) {
+                  newSheet[`AJ${outputRow}`] = { v: houseBill, t: 's' };
+                }
+                
+                // EntryDate -> K列
+                if (entryDate) {
+                  newSheet[`K${outputRow}`] = { v: entryDate, t: 's' };
+                }
+                
+                // ImportDate -> L列
+                if (importDate) {
+                  newSheet[`L${outputRow}`] = { v: importDate, t: 's' };
+                }
                 
                 // dropdown list 选择的机场
                 if (airport === 'ORD' || airport === 'JFK') {
@@ -462,6 +479,9 @@ const TemuPGAPage: React.FC = () => {
     setMawb('');
     setFlightNo('');
     setAirport('ORD');
+    setHouseBill('');
+    setEntryDate('');
+    setImportDate('');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -469,7 +489,7 @@ const TemuPGAPage: React.FC = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">TEMU PGA to NETCHB Processing Tool</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">TEMU PGA Processing Tool</h1>
       
       {!xlsxLoaded && (
         <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
@@ -567,6 +587,45 @@ const TemuPGAPage: React.FC = () => {
                 <option value="JFK">JFK</option>
                 <option value="MIA">MIA</option>
               </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                House Bill
+              </label>
+              <input
+                type="text"
+                value={houseBill}
+                onChange={(e) => setHouseBill(e.target.value)}
+                placeholder="Enter House Bill"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                EntryDate
+              </label>
+              <input
+                type="text"
+                value={entryDate}
+                onChange={(e) => setEntryDate(e.target.value)}
+                placeholder="Enter Entry Date"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                ImportDate
+              </label>
+              <input
+                type="text"
+                value={importDate}
+                onChange={(e) => setImportDate(e.target.value)}
+                placeholder="Enter Import Date"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
             
             <button
