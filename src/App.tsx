@@ -212,6 +212,16 @@ const TemuPGAPage: React.FC = () => {
           // 获取上传文件的范围
           const range = window.XLSX.utils.decode_range(worksheet['!ref']);
           
+          // 获取mawb sheet的A2单元格内容
+          let mawbSheetA2Value = '';
+          if (workbook.SheetNames.includes('mawb')) {
+            const mawbSheet = workbook.Sheets['mawb'];
+            const a2Cell = mawbSheet['A2'];
+            if (a2Cell && a2Cell.v !== undefined && a2Cell.v !== null && a2Cell.v !== '') {
+              mawbSheetA2Value = a2Cell.v;
+            }
+          }
+          
           // Fetch template
           const templateResponse = await fetch('https://jun2369.github.io/MAWBchangenew/NEWCHB.xlsx');
           if (!templateResponse.ok) {
@@ -267,6 +277,11 @@ const TemuPGAPage: React.FC = () => {
                   continue;
                 }
                 
+                // 从mawb sheet的A2单元格获取内容，填充到导出文件的AB列
+                if (mawbSheetA2Value) {
+                  newSheet[`AB${outputRow}`] = { v: mawbSheetA2Value, t: 's' };
+                }
+                
                 // MAWB 处理 - 分割为前3位和后8位
                 const mawbFirst3 = mawb.substring(0, 3);  // 前3位 -> AH列
                 const mawbLast8 = mawb.substring(4);      // 跳过横杠，取后8位 -> AI列
@@ -313,6 +328,24 @@ const TemuPGAPage: React.FC = () => {
                   newSheet[`J${outputRow}`] = { v: '5206', t: 's' };
                   // FL 填充 AX列
                   newSheet[`AX${outputRow}`] = { v: 'FL', t: 's' };
+                } else if (airport === 'LAX') {
+                  // WBH9 填充到 AR列
+                  newSheet[`AR${outputRow}`] = { v: 'WBH9', t: 's' };
+                  // 2720 填充到 J列, AU列, AW列
+                  newSheet[`J${outputRow}`] = { v: '2720', t: 's' };
+                  newSheet[`AU${outputRow}`] = { v: '2720', t: 's' };
+                  newSheet[`AW${outputRow}`] = { v: '2720', t: 's' };
+                  // CA 填充到 AX列
+                  newSheet[`AX${outputRow}`] = { v: 'CA', t: 's' };
+                } else if (airport === 'SFO') {
+                  // W0B3 填充到 AR列
+                  newSheet[`AR${outputRow}`] = { v: 'W0B3', t: 's' };
+                  // 2801 填充到 J列, AU列, AW列
+                  newSheet[`J${outputRow}`] = { v: '2801', t: 's' };
+                  newSheet[`AU${outputRow}`] = { v: '2801', t: 's' };
+                  newSheet[`AW${outputRow}`] = { v: '2801', t: 's' };
+                  // CA 填充到 AX列
+                  newSheet[`AX${outputRow}`] = { v: 'CA', t: 's' };
                 }
                 
                 // 处理列映射
@@ -586,6 +619,8 @@ const TemuPGAPage: React.FC = () => {
                 <option value="ORD">ORD</option>
                 <option value="JFK">JFK</option>
                 <option value="MIA">MIA</option>
+                <option value="LAX">LAX</option>
+                <option value="SFO">SFO</option>
               </select>
             </div>
             
