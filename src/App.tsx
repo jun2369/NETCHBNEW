@@ -73,7 +73,6 @@ const TemuPGAPage: React.FC = () => {
   const [airport, setAirport] = useState('ORD');
   const [houseBill, setHouseBill] = useState('');
   const [entryDate, setEntryDate] = useState('');
-  const [importDate, setImportDate] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [xlsxLoaded, setXlsxLoaded] = useState(false);
@@ -299,14 +298,12 @@ const TemuPGAPage: React.FC = () => {
                   newSheet[`AJ${outputRow}`] = { v: houseBill, t: 's' };
                 }
                 
-                // EntryDate -> K列
+                // EntryDate -> K列, L列, AQ列, AN列
                 if (entryDate) {
                   newSheet[`K${outputRow}`] = { v: entryDate, t: 's' };
-                }
-                
-                // ImportDate -> L列
-                if (importDate) {
-                  newSheet[`L${outputRow}`] = { v: importDate, t: 's' };
+                  newSheet[`L${outputRow}`] = { v: entryDate, t: 's' };
+                  newSheet[`AQ${outputRow}`] = { v: entryDate, t: 's' };
+                  newSheet[`AN${outputRow}`] = { v: entryDate, t: 's' };
                 }
                 
                 // dropdown list 选择的机场
@@ -467,7 +464,7 @@ const TemuPGAPage: React.FC = () => {
               
               URL.revokeObjectURL(url);
               
-              alert('File processed successfully!');
+              // 移除成功提示，直接设置加载状态为false
               setIsLoading(false);
             } catch (innerError) {
               console.error('Error in template processing:', innerError);
@@ -514,7 +511,6 @@ const TemuPGAPage: React.FC = () => {
     setAirport('ORD');
     setHouseBill('');
     setEntryDate('');
-    setImportDate('');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -639,26 +635,19 @@ const TemuPGAPage: React.FC = () => {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                EntryDate
+                Date
+                <span className="ml-2 relative inline-block group">
+                  <span className="text-yellow-500 cursor-help text-base">⚠</span>
+                  <span className="absolute left-0 bottom-full mb-2 w-64 p-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                    The input will be reflected in the Date of Import, as well as in the Entry, Arrival, and Export fields, per Joanna's suggestion
+                  </span>
+                </span>
               </label>
               <input
                 type="text"
                 value={entryDate}
                 onChange={(e) => setEntryDate(e.target.value)}
                 placeholder="Enter Entry Date"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                ImportDate
-              </label>
-              <input
-                type="text"
-                value={importDate}
-                onChange={(e) => setImportDate(e.target.value)}
-                placeholder="Enter Import Date"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
