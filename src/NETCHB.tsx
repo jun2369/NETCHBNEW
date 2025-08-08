@@ -314,7 +314,7 @@ const NETCHBPage: React.FC = () => {
       
       <div className="netchb-top-controls">
         <div className="netchb-airport-selector">
-          <label>Airport</label>
+          <label>POE</label>
           <select
             value={airport}
             onChange={(e) => setAirport(e.target.value)}
@@ -376,7 +376,7 @@ const NETCHBPage: React.FC = () => {
           className="netchb-convert-button"
           onClick={handleConvert}
         >
-          转换
+          CONVERT
         </button>
         <button 
           className="netchb-reset-button"
@@ -402,7 +402,7 @@ const NETCHBPage: React.FC = () => {
               <tr>
                 <th>
                   <div className="netchb-th-content">
-                    <span>EntryNumber</span>
+                    <span>Entry Number</span>
                     <input
                       type="text"
                       className="netchb-filter-input"
