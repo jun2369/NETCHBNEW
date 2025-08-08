@@ -310,11 +310,11 @@ const NETCHBPage: React.FC = () => {
 
   return (
     <div className="netchb-container">
-      <h1 className="netchb-title">T01 PGA ENTRY-NETCHB Processing Tool</h1>
+      <h1 className="netchb-title">NETCHB Processing Tool</h1>
       
       <div className="netchb-top-controls">
         <div className="netchb-airport-selector">
-          <label>POE</label>
+          <label>Airport</label>
           <select
             value={airport}
             onChange={(e) => setAirport(e.target.value)}
@@ -376,7 +376,7 @@ const NETCHBPage: React.FC = () => {
           className="netchb-convert-button"
           onClick={handleConvert}
         >
-          CONVERT
+          转换
         </button>
         <button 
           className="netchb-reset-button"
@@ -386,13 +386,13 @@ const NETCHBPage: React.FC = () => {
         </button>
       </div>
 
-      {showTable && filteredData.length > 0 && (
+      {showTable && (
         <div className="netchb-table-container">
           <div className="netchb-table-header">
             <button 
               className="netchb-export-button"
               onClick={exportToExcel}
-              disabled={!xlsxLoaded}
+              disabled={!xlsxLoaded || filteredData.length === 0}
             >
               📥 Export to Excel
             </button>
@@ -463,15 +463,23 @@ const NETCHBPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((row, index) => (
-                <tr key={index}>
-                  <td>{row.entryNumber}</td>
-                  <td>{row.status}</td>
-                  <td>{row.eventTime}</td>
-                  <td>{row.timeZone}</td>
-                  <td>{row.line}</td>
+              {filteredData.length > 0 ? (
+                filteredData.map((row, index) => (
+                  <tr key={index}>
+                    <td>{row.entryNumber}</td>
+                    <td>{row.status}</td>
+                    <td>{row.eventTime}</td>
+                    <td>{row.timeZone}</td>
+                    <td>{row.line}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="netchb-no-data">
+                    No data found
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

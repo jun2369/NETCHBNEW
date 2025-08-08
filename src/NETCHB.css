@@ -299,6 +299,14 @@
     color: #1f2937;
   }
   
+  .netchb-no-data {
+    text-align: center;
+    padding: 2rem !important;
+    color: #6b7280;
+    font-style: italic;
+    background-color: #f9fafb;
+  }
+  
   .netchb-table tbody tr:last-child {
     border-bottom: none;
   }
