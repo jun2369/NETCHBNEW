@@ -1,0 +1,304 @@
+/* NETCHB Component Styles */
+.netchb-container {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  .netchb-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1f2937;
+    margin-bottom: 2rem;
+  }
+  
+  .netchb-top-controls {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+  }
+  
+  .netchb-airport-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .netchb-mawb-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .netchb-mawb-input label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+  }
+  
+  .netchb-mawb-input input {
+    width: 200px;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    background-color: white;
+    transition: border-color 0.2s;
+  }
+  
+  .netchb-mawb-input input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .netchb-airport-selector label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+  }
+  
+  .netchb-airport-selector select {
+    width: 200px;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    background-color: white;
+    transition: border-color 0.2s;
+  }
+  
+  .netchb-airport-selector select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .netchb-input-groups {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .netchb-input-group-item {
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  }
+  
+  .netchb-group-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .netchb-toggle-button {
+    padding: 0.5rem 1rem;
+    background-color: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .netchb-toggle-button:hover {
+    background-color: #e5e7eb;
+  }
+  
+  .netchb-entry-input {
+    flex: 1;
+    max-width: 300px;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    transition: border-color 0.2s;
+  }
+  
+  .netchb-entry-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .netchb-textarea-small {
+    width: 100%;
+    height: 200px;
+    padding: 1rem;
+    border: 2px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-family: monospace;
+    resize: vertical;
+    background-color: white;
+    transition: border-color 0.2s;
+  }
+  
+  .netchb-textarea-small:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .netchb-convert-button {
+    padding: 0.75rem 3rem;
+    background-color: #10b981;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  }
+  
+  .netchb-convert-button:hover {
+    background-color: #059669;
+  }
+  
+  .netchb-button-group {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .netchb-reset-button {
+    padding: 0.75rem 2rem;
+    background-color: #6b7280;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  }
+  
+  .netchb-reset-button:hover {
+    background-color: #4b5563;
+  }
+  
+  .netchb-reset-button:active {
+    background-color: #374151;
+  }
+  
+  .netchb-th-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .netchb-th-content span {
+    display: block;
+  }
+  
+  .netchb-filter-input {
+    width: 100%;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    background-color: white;
+  }
+  
+  .netchb-filter-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  }
+  
+  /* 表格样式 */
+  .netchb-table-container {
+    margin-top: 2rem;
+    width: 90%;
+    max-width: 900px;
+    overflow-x: auto;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  }
+  
+  .netchb-table-header {
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .netchb-export-button {
+    padding: 0.5rem 1rem;
+    background-color: #3b82f6;
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .netchb-export-button:hover {
+    background-color: #2563eb;
+  }
+  
+  .netchb-export-button:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+  }
+  
+  .netchb-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .netchb-table thead {
+    background-color: #f3f4f6;
+    border-bottom: 2px solid #e5e7eb;
+  }
+  
+  .netchb-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .netchb-table tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .netchb-table tbody tr:hover {
+    background-color: #f9fafb;
+  }
+  
+  .netchb-table td {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: #1f2937;
+  }
+  
+  .netchb-table tbody tr:last-child {
+    border-bottom: none;
+  }
