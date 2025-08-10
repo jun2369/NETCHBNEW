@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './NETCHB.css';
+import './Magaya.css';
 
 declare global {
   interface Window {
@@ -22,7 +22,7 @@ interface InputGroup {
   isExpanded: boolean;
 }
 
-const NETCHBPage: React.FC = () => {
+const MagayaPage: React.FC = () => {
   const [airport, setAirport] = useState('ORD');
   const [mawb, setMawb] = useState('');
   const [tableData, setTableData] = useState<TableRow[]>([]);
@@ -175,20 +175,35 @@ const NETCHBPage: React.FC = () => {
     });
   };
 
-  const formatEventTime = (time: string): string => {
-    // 格式化时间，如果月份是单数字，添加前导0
-    // 输入格式: "7/06/25 18:18" 或 "11/06/25 18:18"
-    if (!time) return time;
+  // 将时间戳格式化为所需格式
+  const formatDateTime = (dateTimeStr: string): string => {
+    // 输入格式: "Sat Aug 09 2025 06:07:32 GMT-0500 (Central Daylight Time)"
+    // 输出格式: "08/09/25 06:07"
     
-    const parts = time.split('/');
-    if (parts.length >= 3) {
-      const month = parts[0];
-      // 如果月份是单数字，添加前导0
-      if (month.length === 1) {
-        return `0${time}`;
-      }
+    if (!dateTimeStr) return '';
+    
+    try {
+      // 解析日期字符串
+      const dateMatch = dateTimeStr.match(/(\w+)\s+(\w+)\s+(\d{2})\s+(\d{4})\s+(\d{2}):(\d{2}):(\d{2})/);
+      if (!dateMatch) return '';
+      
+      const [, dayName, monthName, day, year, hour, minute] = dateMatch;
+      
+      // 月份映射
+      const monthMap: { [key: string]: string } = {
+        'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+        'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+        'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+      };
+      
+      const month = monthMap[monthName] || '00';
+      const yearShort = year.slice(-2);
+      
+      return `${month}/${day}/${yearShort} ${hour}:${minute}`;
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return '';
     }
-    return time;
   };
 
   const handleConvert = () => {
@@ -202,69 +217,51 @@ const NETCHBPage: React.FC = () => {
         return;
       }
       
-      const lines = group.inputData.split('\n').filter(line => line.trim());
+      const lines = group.inputData.split('\n');
       
-      // 存储CPS和FDA的时间和状态
-      let cpsEventTime = '';
-      let fdaEventTime = '';
-      let cpsStatus = '';
-      let fdaStatus = '';
+      let currentEventTime = '';
       
-      lines.forEach(line => {
-        // 提取CPS主标题行的时间和状态
-        if (line.includes('] CPS, CPS:')) {
-          const timeMatch = line.match(/\[([^\]]+)\]/);
-          if (timeMatch) {
-            cpsEventTime = formatEventTime(timeMatch[1]);
-          }
-          // 检查是否包含 DATA UNDER PGA REVIEW
-          if (line.includes('DATA UNDER PGA REVIEW')) {
-            cpsStatus = 'CPSC_check';
-          }
+      // 遍历所有行
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        
+        if (!line) continue;
+        
+        // 检查是否是时间戳行（包含 GMT 的行）
+        if (line.includes('GMT-') || line.includes('GMT+')) {
+          // 提取并格式化时间
+          currentEventTime = formatDateTime(line);
+          continue;
         }
         
-        // 提取FDA主标题行的时间和状态
-        if (line.includes('] FDA,')) {
-          const timeMatch = line.match(/\[([^\]]+)\]/);
-          if (timeMatch) {
-            fdaEventTime = formatEventTime(timeMatch[1]);
-          }
-          // 检查是否包含 UNDER PGA REVIEW
-          if (line.includes('UNDER PGA REVIEW')) {
-            fdaStatus = 'FDA_check';
-          }
-        }
-        
-        // 处理包含[CPS]的行
-        if (line.includes('[CPS]')) {
-          const summaryLineMatch = line.match(/Summary Line (\d+)/);
-          if (summaryLineMatch) {
-            const lineNumber = summaryLineMatch[1];
-            allParsedData.push({
-              entryNumber: group.entryNumber,
-              status: cpsStatus,
-              eventTime: cpsEventTime,
-              timeZone: timeZone,
-              line: lineNumber
-            });
-          }
-        }
-        
-        // 处理包含[FDA]的行
-        if (line.includes('[FDA]')) {
-          const fdaLineMatch = line.match(/Line (\d+),/);
-          if (fdaLineMatch) {
-            const lineNumber = fdaLineMatch[1];
-            allParsedData.push({
-              entryNumber: group.entryNumber,
-              status: fdaStatus,
-              eventTime: fdaEventTime,
-              timeZone: timeZone,
-              line: lineNumber
-            });
+        // 检查是否是 Line# 开头的行
+        if (line.startsWith('Line#')) {
+          // 提取行号
+          const lineMatch = line.match(/Line#\s+(\d+)/);
+          if (lineMatch) {
+            const lineNumber = lineMatch[1];
+            
+            // 确定状态
+            let status = '';
+            if (line.includes('DATA UNDER PGA REVIEW')) {
+              status = 'CPSC_check';
+            } else if (line.includes('MAY PROCEED')) {
+              status = 'CPSC_release';
+            }
+            
+            // 只有当有有效的状态时才添加数据
+            if (status) {
+              allParsedData.push({
+                entryNumber: group.entryNumber,
+                status: status,
+                eventTime: currentEventTime,
+                timeZone: timeZone,
+                line: lineNumber
+              });
+            }
           }
         }
-      });
+      }
     });
 
     setTableData(allParsedData);
@@ -295,10 +292,10 @@ const NETCHBPage: React.FC = () => {
     
     // 创建工作簿
     const wb = window.XLSX.utils.book_new();
-    window.XLSX.utils.book_append_sheet(wb, ws, 'NETCHB Data');
+    window.XLSX.utils.book_append_sheet(wb, ws, 'MAGAYA Data');
     
     // 生成文件名
-    const fileName = mawb ? `${mawb}_NETCHB T01 PGA.xlsx` : 'NETCHB T01 PGA.xlsx';
+    const fileName = mawb ? `${mawb}_MAGAYA T01 PGA.xlsx` : 'MAGAYA T01 PGA.xlsx';
     
     // 导出文件
     window.XLSX.writeFile(wb, fileName);
@@ -312,11 +309,11 @@ const NETCHBPage: React.FC = () => {
   };
 
   return (
-    <div className="netchb-container">
-      <h1 className="netchb-title">T01 PGA ENTRY-NETCHB Processing Tool</h1>
+    <div className="magaya-container">
+      <h1 className="magaya-title">T01 PGA ENTRY-MAGAYA Processing Tool</h1>
       
-      <div className="netchb-top-controls">
-        <div className="netchb-airport-selector">
+      <div className="magaya-top-controls">
+        <div className="magaya-airport-selector">
           <label>POE</label>
           <select
             value={airport}
@@ -331,7 +328,7 @@ const NETCHBPage: React.FC = () => {
           </select>
         </div>
         
-        <div className="netchb-mawb-input">
+        <div className="magaya-mawb-input">
           <label>MAWB (Optional)</label>
           <input
             type="text"
@@ -342,12 +339,12 @@ const NETCHBPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="netchb-input-groups">
+      <div className="magaya-input-groups">
         {inputGroups.map((group) => (
-          <div key={group.id} className="netchb-input-group-item">
-            <div className="netchb-group-header">
+          <div key={group.id} className="magaya-input-group-item">
+            <div className="magaya-group-header">
               <button 
-                className="netchb-toggle-button"
+                className="magaya-toggle-button"
                 onClick={() => toggleExpand(group.id)}
               >
                 {group.isExpanded ? '−' : '+'} Entry {group.id}
@@ -355,7 +352,7 @@ const NETCHBPage: React.FC = () => {
               {group.isExpanded && (
                 <input
                   type="text"
-                  className="netchb-entry-input"
+                  className="magaya-entry-input"
                   value={group.entryNumber}
                   onChange={(e) => updateEntryNumber(group.id, e.target.value)}
                   placeholder="Enter Entry Number"
@@ -364,7 +361,7 @@ const NETCHBPage: React.FC = () => {
             </div>
             {group.isExpanded && (
               <textarea
-                className="netchb-textarea-small"
+                className="magaya-textarea-small"
                 value={group.inputData}
                 onChange={(e) => updateInputData(group.id, e.target.value)}
                 placeholder={`Paste data for Entry ${group.id} here...`}
@@ -374,41 +371,41 @@ const NETCHBPage: React.FC = () => {
         ))}
       </div>
       
-      <div className="netchb-button-group">
+      <div className="magaya-button-group">
         <button 
-          className="netchb-convert-button"
+          className="magaya-convert-button"
           onClick={handleConvert}
         >
           CONVERT
         </button>
         <button 
-          className="netchb-reset-button"
+          className="magaya-reset-button"
           onClick={handleReset}
         >
           RESET
         </button>
       </div>
 
-      {showTable && filteredData.length > 0 && (
-        <div className="netchb-table-container">
-          <div className="netchb-table-header">
+      {showTable && (
+        <div className="magaya-table-container">
+          <div className="magaya-table-header">
             <button 
-              className="netchb-export-button"
+              className="magaya-export-button"
               onClick={exportToExcel}
-              disabled={!xlsxLoaded}
+              disabled={!xlsxLoaded || filteredData.length === 0}
             >
               📥 Export to Excel
             </button>
           </div>
-          <table className="netchb-table">
+          <table className="magaya-table">
             <thead>
               <tr>
                 <th>
-                  <div className="netchb-th-content">
+                  <div className="magaya-th-content">
                     <span>EntryNumber</span>
                     <input
                       type="text"
-                      className="netchb-filter-input"
+                      className="magaya-filter-input"
                       placeholder="Filter..."
                       value={filters.entryNumber}
                       onChange={(e) => updateFilter('entryNumber', e.target.value)}
@@ -416,11 +413,11 @@ const NETCHBPage: React.FC = () => {
                   </div>
                 </th>
                 <th>
-                  <div className="netchb-th-content">
+                  <div className="magaya-th-content">
                     <span>Status</span>
                     <input
                       type="text"
-                      className="netchb-filter-input"
+                      className="magaya-filter-input"
                       placeholder="Filter..."
                       value={filters.status}
                       onChange={(e) => updateFilter('status', e.target.value)}
@@ -428,11 +425,11 @@ const NETCHBPage: React.FC = () => {
                   </div>
                 </th>
                 <th>
-                  <div className="netchb-th-content">
+                  <div className="magaya-th-content">
                     <span>Event Time</span>
                     <input
                       type="text"
-                      className="netchb-filter-input"
+                      className="magaya-filter-input"
                       placeholder="Filter..."
                       value={filters.eventTime}
                       onChange={(e) => updateFilter('eventTime', e.target.value)}
@@ -440,11 +437,11 @@ const NETCHBPage: React.FC = () => {
                   </div>
                 </th>
                 <th>
-                  <div className="netchb-th-content">
+                  <div className="magaya-th-content">
                     <span>Time Zone</span>
                     <input
                       type="text"
-                      className="netchb-filter-input"
+                      className="magaya-filter-input"
                       placeholder="Filter..."
                       value={filters.timeZone}
                       onChange={(e) => updateFilter('timeZone', e.target.value)}
@@ -452,11 +449,11 @@ const NETCHBPage: React.FC = () => {
                   </div>
                 </th>
                 <th>
-                  <div className="netchb-th-content">
+                  <div className="magaya-th-content">
                     <span>Line</span>
                     <input
                       type="text"
-                      className="netchb-filter-input"
+                      className="magaya-filter-input"
                       placeholder="Filter..."
                       value={filters.line}
                       onChange={(e) => updateFilter('line', e.target.value)}
@@ -466,15 +463,23 @@ const NETCHBPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((row, index) => (
-                <tr key={index}>
-                  <td>{row.entryNumber}</td>
-                  <td>{row.status}</td>
-                  <td>{row.eventTime}</td>
-                  <td>{row.timeZone}</td>
-                  <td>{row.line}</td>
+              {filteredData.length > 0 ? (
+                filteredData.map((row, index) => (
+                  <tr key={index}>
+                    <td>{row.entryNumber}</td>
+                    <td>{row.status}</td>
+                    <td>{row.eventTime}</td>
+                    <td>{row.timeZone}</td>
+                    <td>{row.line}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
+                    No data found matching your filters
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
@@ -483,4 +488,4 @@ const NETCHBPage: React.FC = () => {
   );
 };
 
-export default NETCHBPage;
+export default MagayaPage;

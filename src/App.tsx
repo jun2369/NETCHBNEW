@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import NETCHBPage from './NETCHB'; // 导入新的NETCHB组件
+import MagayaPage from './Magaya'; // 导入新的Magaya组件
 
 // Define types for Excel operations
 declare global {
@@ -38,6 +39,16 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
             }`}
           >
             T01 PGA ENTRY-NETCHB
+          </button>
+          <button
+            onClick={() => setActiveTab('magaya')}
+            className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+              activeTab === 'magaya'
+                ? 'bg-blue-500 text-white shadow-md'
+                : 'bg-white bg-opacity-70 text-gray-700 hover:bg-opacity-90'
+            }`}
+          >
+            T01 PGA ENTRY-MAGAYA
           </button>
           <button
             onClick={() => setActiveTab('other')}
@@ -698,6 +709,7 @@ const App: React.FC = () => {
       <main className="flex-1 bg-gradient-to-br from-blue-100 via-white to-orange-100 overflow-auto">
         {activeTab === 'temu' && <TemuPGAPage />}
         {activeTab === 'netchb' && <NETCHBPage />}
+        {activeTab === 'magaya' && <MagayaPage />}
         {activeTab === 'other' && <OtherPage />}
       </main>
     </div>
